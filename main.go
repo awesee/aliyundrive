@@ -36,7 +36,6 @@ func AllFiles() {
 		n := len(allFiles[item.ContentHash])
 		fmt.Println(item.FullName, n)
 		if n == 2 {
-			fmt.Println(allFiles[item.ContentHash])
 			time.Sleep(2 * time.Second)
 		}
 	})
@@ -52,7 +51,7 @@ func Walk(filePath, root string, fn func(string, api.FileListItemV3)) error {
 	}
 	for _, item := range result.Items {
 		if item.Type == "folder" {
-			filePath = path.Join(filePath, item.Name)
+			filePath := path.Join(filePath, item.Name)
 			err = Walk(filePath, item.FileID, fn)
 			if err != nil {
 				return err
