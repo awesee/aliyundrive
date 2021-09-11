@@ -69,6 +69,7 @@ func DeleteDuplicateFile() {
 	check(err)
 	err = json.Unmarshal(data, &allFiles)
 	check(err)
+	fileIds := make([]string, 0)
 	for _, items := range allFiles {
 		if len(items) < 2 || items[0].Size < 0*MB {
 			continue
@@ -77,11 +78,13 @@ func DeleteDuplicateFile() {
 			return items[i].Name > items[j].Name
 		})
 		for _, item := range items[1:] {
-			err := api.RecycleBinTrashV2(item.FileID)
-			check(err)
+			fileIds = append(fileIds, item.FileID)
 			fmt.Println(items[0].FullName, item.FullName, err)
 		}
 	}
+	result, _ := api.RecycleBinTrashBatchV2(fileIds)
+	data, err = json.MarshalIndent(result, "", "\t")
+	fmt.Printf("%s\n%v\n", data, err)
 }
 
 func check(err error) {

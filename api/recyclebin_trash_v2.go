@@ -27,3 +27,22 @@ func RecycleBinTrashV2(fileId string) error {
 	}
 	return err
 }
+
+func RecycleBinTrashBatchV2(fileId []string) (BatchResultV2, error) {
+	requests := make([]interface{}, 0)
+	for _, id := range fileId {
+		requests = append(requests, map[string]interface{}{
+			"body": map[string]string{
+				"drive_id": "83410",
+				"file_id":  id,
+			},
+			"headers": map[string]string{
+				"Content-Type": "application/json",
+			},
+			"id":     id,
+			"method": "POST",
+			"url":    "/recyclebin/trash",
+		})
+	}
+	return BatchV2("file", requests)
+}
