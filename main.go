@@ -28,9 +28,9 @@ func AllFiles() {
 		allFiles[item.ContentHash] = append(allFiles[item.ContentHash], item)
 		n := len(allFiles[item.ContentHash])
 		fmt.Println(item.Name, n)
-		if n >= 2 {
+		if n == 2 {
 			fmt.Println(allFiles[item.ContentHash])
-			time.Sleep(5 * time.Second)
+			time.Sleep(2 * time.Second)
 		}
 	})
 	fmt.Println(err)
