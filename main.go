@@ -8,7 +8,6 @@ import (
 	"path"
 	"path/filepath"
 	"sort"
-	"time"
 
 	"github.com/openset/aliyundrive/api"
 )
@@ -24,8 +23,8 @@ var home, _ = os.UserHomeDir()
 var allFilesPath = filepath.Join(home, "all_files.json")
 
 func main() {
-	// AllFiles()
-	// DeleteDuplicateFile()
+	AllFiles()
+	DeleteDuplicateFile()
 }
 
 func AllFiles() {
@@ -34,10 +33,7 @@ func AllFiles() {
 		item.FullName = path.Join(filePath, item.Name)
 		allFiles[item.ContentHash] = append(allFiles[item.ContentHash], item)
 		n := len(allFiles[item.ContentHash])
-		fmt.Println(item.FullName, n)
-		if n == 2 {
-			time.Sleep(2 * time.Second)
-		}
+		fmt.Println(n, item.FullName)
 	})
 	fmt.Println(err)
 	data, _ := json.MarshalIndent(allFiles, "", "\t")
@@ -45,6 +41,9 @@ func AllFiles() {
 }
 
 func Walk(filePath, root string, fn func(string, api.FileListItemV3)) error {
+	// if root != "root" && !strings.HasPrefix(filePath, "来自分享") {
+	// 	return nil
+	// }
 	result, err := api.FileListV3(root)
 	if err != nil {
 		return err
@@ -70,7 +69,7 @@ func DeleteDuplicateFile() {
 	err = json.Unmarshal(data, &allFiles)
 	check(err)
 	for _, items := range allFiles {
-		if len(items) < 2 || items[0].Size < 20*MB {
+		if len(items) < 2 || items[0].Size < 0*MB {
 			continue
 		}
 		sort.Slice(items, func(i, j int) bool {
