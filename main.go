@@ -34,7 +34,7 @@ func AllFiles() {
 		}
 	})
 	fmt.Println(err)
-	data, _ := json.Marshal(allFiles)
+	data, _ := json.MarshalIndent(allFiles, "", "\t")
 	_ = os.WriteFile("all_files.json", data, os.ModePerm)
 }
 
