@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"sort"
 	"time"
@@ -29,10 +30,11 @@ func main() {
 
 func AllFiles() {
 	allFiles := make(map[string][]api.FileListItemV3)
-	err := Walk("root", func(item api.FileListItemV3) {
+	err := Walk("", "root", func(filePath string, item api.FileListItemV3) {
+		item.FullName = path.Join(filePath, item.Name)
 		allFiles[item.ContentHash] = append(allFiles[item.ContentHash], item)
 		n := len(allFiles[item.ContentHash])
-		fmt.Println(item.Name, n)
+		fmt.Println(item.FullName, n)
 		if n == 2 {
 			fmt.Println(allFiles[item.ContentHash])
 			time.Sleep(2 * time.Second)
@@ -43,19 +45,20 @@ func AllFiles() {
 	_ = os.WriteFile(allFilesPath, data, os.ModePerm)
 }
 
-func Walk(root string, fn func(api.FileListItemV3)) error {
+func Walk(filePath, root string, fn func(string, api.FileListItemV3)) error {
 	result, err := api.FileListV3(root)
 	if err != nil {
 		return err
 	}
 	for _, item := range result.Items {
 		if item.Type == "folder" {
-			err = Walk(item.FileID, fn)
+			filePath = path.Join(filePath, item.Name)
+			err = Walk(filePath, item.FileID, fn)
 			if err != nil {
 				return err
 			}
 		} else {
-			fn(item)
+			fn(filePath, item)
 		}
 	}
 	return nil
@@ -77,7 +80,7 @@ func DeleteDuplicateFile() {
 		for _, item := range items[1:] {
 			err := api.RecycleBinTrashV2(item.FileID)
 			check(err)
-			fmt.Println(items[0].Name, item.Name, err)
+			fmt.Println(items[0].FullName, item.FullName, err)
 		}
 	}
 }

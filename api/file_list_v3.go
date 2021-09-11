@@ -39,6 +39,7 @@ type FileListItemV3 struct {
 	URL             string    `json:"url,omitempty"`
 	Category        string    `json:"category,omitempty"`
 	PunishFlag      int       `json:"punish_flag,omitempty"`
+	FullName        string    `json:"full_name,omitempty"`
 }
 
 func FileListV3(parentFileId string) (result FileListResultV3, err error) {
@@ -62,8 +63,8 @@ func FileListV3(parentFileId string) (result FileListResultV3, err error) {
 	req.Header.Set("authorization", Authorization)
 	req.Header.Set("Content-Type", contentType)
 	resp, err := http.DefaultClient.Do(req)
-	//dump, err := httputil.DumpResponse(resp, true)
-	//fmt.Printf("%s\n%s\n", dump, err)
+	// dump, err := httputil.DumpResponse(resp, true)
+	// fmt.Printf("%s\n%s\n", dump, err)
 	if err != nil {
 		return
 	}
