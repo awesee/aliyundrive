@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"sort"
 	"time"
 
@@ -17,9 +18,13 @@ const (
 	GB = 1024 * MB
 )
 
+var home, _ = os.UserHomeDir()
+
+var allFilesPath = filepath.Join(home, "all_files.json")
+
 func main() {
-	//AllFiles()
-	//DeleteDuplicateFile()
+	// AllFiles()
+	// DeleteDuplicateFile()
 }
 
 func AllFiles() {
@@ -35,7 +40,7 @@ func AllFiles() {
 	})
 	fmt.Println(err)
 	data, _ := json.MarshalIndent(allFiles, "", "\t")
-	_ = os.WriteFile("all_files.json", data, os.ModePerm)
+	_ = os.WriteFile(allFilesPath, data, os.ModePerm)
 }
 
 func Walk(root string, fn func(api.FileListItemV3)) error {
@@ -58,21 +63,21 @@ func Walk(root string, fn func(api.FileListItemV3)) error {
 
 func DeleteDuplicateFile() {
 	allFiles := make(map[string][]api.FileListItemV3)
-	data, err := os.ReadFile("all_files.json")
+	data, err := os.ReadFile(allFilesPath)
 	check(err)
 	err = json.Unmarshal(data, &allFiles)
 	check(err)
 	for _, items := range allFiles {
-		if len(items) < 2 || items[0].Size < GB {
+		if len(items) < 2 || items[0].Size < 20*MB {
 			continue
 		}
 		sort.Slice(items, func(i, j int) bool {
-			return items[i].Name <= items[j].Name
+			return items[i].Name > items[j].Name
 		})
 		for _, item := range items[1:] {
 			err := api.RecycleBinTrashV2(item.FileID)
 			check(err)
-			fmt.Println(item.Name, err)
+			fmt.Println(items[0].Name, item.Name, err)
 		}
 	}
 }
