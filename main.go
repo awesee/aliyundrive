@@ -19,7 +19,7 @@ const (
 
 func main() {
 	//AllFiles()
-	//DeleteDuplicateFile()
+	DeleteDuplicateFile()
 }
 
 func AllFiles() {
@@ -67,7 +67,7 @@ func DeleteDuplicateFile() {
 			continue
 		}
 		sort.Slice(items, func(i, j int) bool {
-			return items[i].Name < items[j].Name
+			return items[i].Name <= items[j].Name
 		})
 		for _, item := range items[1:] {
 			err := api.RecycleBinTrashV2(item.FileID)
