@@ -8,6 +8,7 @@ import (
 	"path"
 	"path/filepath"
 	"sort"
+	"strings"
 
 	"github.com/openset/aliyundrive/api"
 )
@@ -41,9 +42,9 @@ func AllFiles() {
 }
 
 func Walk(filePath, root string, fn func(string, api.FileListItemV3)) error {
-	// if root != "root" && !strings.HasPrefix(filePath, "来自分享") {
-	// 	return nil
-	// }
+	if root != "root" && !strings.HasPrefix(filePath, "来自分享") {
+		return nil
+	}
 	result, err := api.FileListV3(root)
 	if err != nil {
 		return err

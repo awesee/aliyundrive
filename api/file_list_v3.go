@@ -58,17 +58,24 @@ func FileListV3(parentFileId string) (result FileListResultV3, err error) {
 		"order_by":                "name",
 		"order_direction":         "ASC",
 	}
+label:
 	body, _ := json.Marshal(params)
 	req, _ := http.NewRequest(http.MethodPost, uri, bytes.NewReader(body))
 	req.Header.Set("authorization", Authorization)
 	req.Header.Set("Content-Type", contentType)
 	resp, err := http.DefaultClient.Do(req)
-	// dump, err := httputil.DumpResponse(resp, true)
-	// fmt.Printf("%s\n%s\n", dump, err)
 	if err != nil {
 		return
 	}
 	body, _ = ioutil.ReadAll(resp.Body)
-	err = json.Unmarshal(body, &result)
+	var items FileListResultV3
+	err = json.Unmarshal(body, &items)
+	if err == nil {
+		result.Items = append(result.Items, items.Items...)
+	}
+	if items.NextMarker != "" {
+		params["marker"] = items.NextMarker
+		goto label
+	}
 	return
 }
