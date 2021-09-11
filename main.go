@@ -19,7 +19,7 @@ const (
 
 func main() {
 	//AllFiles()
-	DeleteDuplicateFile()
+	//DeleteDuplicateFile()
 }
 
 func AllFiles() {
@@ -71,6 +71,7 @@ func DeleteDuplicateFile() {
 		})
 		for _, item := range items[1:] {
 			err := api.RecycleBinTrashV2(item.FileID)
+			check(err)
 			fmt.Println(item.Name, err)
 		}
 	}

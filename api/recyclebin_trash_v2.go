@@ -3,7 +3,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"net/http"
 )
 
@@ -19,6 +19,11 @@ func RecycleBinTrashV2(fileId string) error {
 	req.Header.Set("authorization", Authorization)
 	req.Header.Set("Content-Type", contentType)
 	resp, err := http.DefaultClient.Do(req)
-	fmt.Println(resp.Status)
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode != 204 {
+		return errors.New(resp.Status)
+	}
 	return err
 }
