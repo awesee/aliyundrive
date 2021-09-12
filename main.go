@@ -29,8 +29,8 @@ func main() {
 }
 
 func AllFiles() {
-	allFiles := make(map[string][]api.FileListItemV3)
-	err := Walk("", "root", func(filePath string, item api.FileListItemV3) {
+	allFiles := make(map[string][]api.FileSearchItemV3)
+	err := Walk("", "root", func(filePath string, item api.FileSearchItemV3) {
 		item.FullName = path.Join(filePath, item.Name)
 		allFiles[item.ContentHash] = append(allFiles[item.ContentHash], item)
 		n := len(allFiles[item.ContentHash])
@@ -41,11 +41,11 @@ func AllFiles() {
 	_ = os.WriteFile(allFilesPath, data, os.ModePerm)
 }
 
-func Walk(filePath, root string, fn func(string, api.FileListItemV3)) error {
-	if root != "root" && !strings.HasPrefix(filePath, "来自分享") {
+func Walk(filePath, root string, fn func(string, api.FileSearchItemV3)) error {
+	if root != "root" && !strings.HasPrefix(filePath, "") {
 		return nil
 	}
-	result, err := api.FileListV3(root)
+	result, err := api.FileSearchV3()
 	if err != nil {
 		return err
 	}
@@ -75,14 +75,14 @@ func DeleteDuplicateFile() {
 			continue
 		}
 		sort.Slice(items, func(i, j int) bool {
-			return items[i].Name > items[j].Name
+			return items[i].Name < items[j].Name || items[i].CreatedAt.Before(items[j].CreatedAt)
 		})
 		for _, item := range items[1:] {
 			fileIds = append(fileIds, item.FileID)
 			fmt.Println(items[0].FullName, item.FullName, err)
 		}
 	}
-	result, _ := api.RecycleBinTrashBatchV2(fileIds)
+	result, _ := api.RecycleBinTrashBatchV2("9680003", fileIds)
 	data, err = json.MarshalIndent(result, "", "\t")
 	fmt.Printf("%s\n%v\n", data, err)
 }

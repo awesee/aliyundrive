@@ -9,11 +9,11 @@ import (
 )
 
 type FileSearchResultV3 struct {
-	Items      []FileListItemV3 `json:"items"`
-	NextMarker string           `json:"next_marker"`
+	Items      []FileSearchItemV3 `json:"items"`
+	NextMarker string             `json:"next_marker"`
 }
 
-type FileSearchItem struct {
+type FileSearchItemV3 struct {
 	DriveID            string    `json:"drive_id"`
 	DomainID           string    `json:"domain_id"`
 	FileID             string    `json:"file_id"`
@@ -97,6 +97,7 @@ type FileSearchItem struct {
 			} `json:"cropping_boundary"`
 		} `json:"cropping_suggestion"`
 	} `json:"image_media_metadata,omitempty"`
+	FullName string `json:"full_name,omitempty"`
 }
 
 func FileSearchV3() (result FileSearchResultV3, err error) {
