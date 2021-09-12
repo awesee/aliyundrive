@@ -12,6 +12,7 @@ type FileListResultV3 struct {
 	Items      []FileListItemV3 `json:"items"`
 	NextMarker string           `json:"next_marker"`
 }
+
 type FileListItemV3 struct {
 	DriveID         string    `json:"drive_id"`
 	DomainID        string    `json:"domain_id"`

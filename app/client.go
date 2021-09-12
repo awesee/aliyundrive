@@ -2,8 +2,9 @@ package app
 
 import (
 	"encoding/json"
-	"github.com/openset/aliyundrive/config"
 	"time"
+
+	"github.com/openset/aliyundrive/config"
 )
 
 var Client = client{
