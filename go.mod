@@ -1,3 +1,3 @@
-module github.com/openset/aliyundrive
+module github.com/awesee/aliyundrive
 
 go 1.16
